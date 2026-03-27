@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Tareas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        h1 i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+        .menu-item {
+            display: block;
+            padding: 15px 20px;
+            margin: 15px 0;
+            background: #f8f9fa;
+            border-radius: 12px;
+            color: #2c3e50;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+        .menu-item:hover {
+            transform: translateX(5px);
+            background: #edf2f7;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .menu-item i {
+            width: 30px;
+            color: #667eea;
+        }
+        .status {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .badge {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1><i class="fas fa-tasks"></i> Gestor de Tareas</h1>
+        
+        <a href="gestor.php" class="menu-item">
+            <i class="fas fa-list"></i> Ver Gestor de Tareas (PHP)
+        </a>
+        
+        <a href="api/tareas.php" target="_blank" class="menu-item">
+            <i class="fas fa-code"></i> Ver API (JSON)
+        </a>
+        
+        <a href="http://localhost:8081" target="_blank" class="menu-item">
+            <i class="fas fa-database"></i> PHPMyAdmin
+        </a>
+
+        <div class="status">
+            <h3><i class="fas fa-info-circle"></i> Estado del sistema</h3>
+            <?php
+            require_once 'conexion.php';
+            
+            // Probar conexión
+            if ($conexion) {
+                echo '<div class="status-item"><span>✅ MySQL</span> <span class="badge">Conectado</span></div>';
+                
+                // Contar tareas
+                $result = $conexion->query("SELECT COUNT(*) as total FROM Tareas");
+                $total = $result->fetch_assoc()['total'];
+                echo '<div class="status-item"><span>📋 Tareas</span> <span class="badge">' . $total . '</span></div>';
+                
+                // Contar categorías
+                $result = $conexion->query("SELECT COUNT(*) as total FROM Categorias");
+                $total = $result->fetch_assoc()['total'];
+                echo '<div class="status-item"><span>🏷️ Categorías</span> <span class="badge">' . $total . '</span></div>';
+            } else {
+                echo '<div class="status-item"><span>❌ MySQL</span> <span class="badge">Error</span></div>';
+            }
+            ?>
+        </div>
+
+        <div style="margin-top: 20px; color: #95a5a6; font-size: 0.8em;">
+            <i class="fas fa-docker"></i> Docker • PHP • MySQL
+        </div>
+    </div>
+</body>
+</html> 

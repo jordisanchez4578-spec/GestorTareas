@@ -1,0 +1,93 @@
+<div class="container mt-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+      <i class="fas fa-tasks me-2"></i>
+      Gestor de Tareas
+    </h1>
+    <button class="btn btn-primary" (click)="cargarTareas()" [disabled]="cargando">
+      <i class="fas" [class.fa-sync]="!cargando" [class.fa-spinner]="cargando" [class.fa-spin]="cargando"></i>
+      {{ cargando ? 'Cargando...' : 'Recargar' }}
+    </button>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+    <hr>
+    <small>Verifica que Docker esté corriendo y la API en {{ apiUrl }}</small>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="cargando && !error" class="text-center p-5">
+    <div class="spinner-border text-primary mb-3" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="text-muted">Cargando tareas desde MySQL...</p>
+  </div>
+
+  <!-- Lista de tareas -->
+  <div *ngIf="!cargando && !error">
+    <!-- Empty state -->
+    <div *ngIf="tareas.length === 0" class="text-center p-5 bg-light rounded">
+      <i class="fas fa-clipboard-list fa-4x text-muted mb-3"></i>
+      <h3>No hay tareas</h3>
+      <p class="text-muted">Crea una tarea desde PHPMyAdmin o DBeaver</p>
+      <a href="http://localhost:8081" target="_blank" class="btn btn-outline-primary">
+        <i class="fas fa-database me-2"></i>
+        Abrir PHPMyAdmin
+      </a>
+    </div>
+
+    <!-- Tareas -->
+    <div *ngFor="let tarea of tareas" class="card mb-3" [class.bg-light]="tarea.completada === 1">
+      <div class="card-body">
+        <div class="d-flex align-items-start">
+          <!-- Checkbox -->
+          <div class="form-check me-3">
+            <input class="form-check-input" type="checkbox" 
+                   [checked]="tarea.completada === 1"
+                   (change)="toggleCompletada(tarea)">
+          </div>
+
+          <!-- Contenido -->
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between">
+              <h5 class="card-title" [class.text-decoration-line-through]="tarea.completada === 1">
+                {{ tarea.titulo }}
+                <span class="ms-2" [ngClass]="getPrioridadClass(tarea.prioridad)">
+                  {{ tarea.prioridad | uppercase }}
+                </span>
+              </h5>
+              <button class="btn btn-sm btn-outline-danger" (click)="eliminarTarea(tarea.id)">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+            
+            <p class="card-text" *ngIf="tarea.descripcion">{{ tarea.descripcion }}</p>
+            
+            <div class="d-flex gap-2 mt-2">
+              <span *ngIf="tarea.categoria_nombre" class="badge" 
+                    [style.background-color]="tarea.categoria_color || '#6c757d'">
+                <i class="fas fa-tag me-1"></i>
+                {{ tarea.categoria_nombre }}
+              </span>
+              
+              <span *ngIf="tarea.fecha_limite" class="badge bg-info">
+                <i class="far fa-calendar me-1"></i>
+                {{ formatearFecha(tarea.fecha_limite) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debug info -->
+    <div class="text-muted small mt-3">
+      <i class="fas fa-database me-1"></i>
+      {{ tareas.length }} tareas cargadas desde MySQL
+    </div>
+  </div>
+</div>

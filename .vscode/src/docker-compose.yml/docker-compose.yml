@@ -1,0 +1,30 @@
+services:
+  # El servidor web (donde estará tu HTML y PHP)
+  web:
+    image: php:8.2-apache
+    container_name: mi_servidor_web
+    ports:
+      - "8080:80" # Tu web estará en http://localhost:8080
+    volumes:
+      - ./src:/var/www/html # Tus archivos irán en una carpeta llamada 'src'
+    depends_on:
+      - db
+    networks:
+      - red-app∫
+
+  # La Base de Datos (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: mi_base_datos
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gestorTareas
+    ports:
+      - "3306:3306" # Para que DBeaver se conecte aquí
+    networks:
+      - red-app
+
+networks:
+  red-app:
+    driver: bridge
